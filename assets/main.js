@@ -1,6 +1,8 @@
-const renderCities = (citiesFromLocalStorage) => {
+const renderCitiesFromLocalStorage = (citiesFromLocalStorage) => {
   //for each city, construct a list item and append to the list group.
 };
+
+const getFromLocalStorage = () => {};
 
 const getCurrentData = (oneApiData) => {
   //from object, extract the data points you need for the return data
@@ -71,8 +73,7 @@ const getOneCallApiUrl = (dataFromServer) => {
 };
 
 const fetchAllWeatherData = (city) => {
-  const currentWeatherUrl =
-    "http://api.openweathermap.org/data/2.5/forecast?q=London&appid=d34a16a53b39e4eaf211ff76b0adf70c";
+  const currentWeatherUrl = `http://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=d34a16a53b39e4eaf211ff76b0adf70c`;
   fetch(currentWeatherUrl);
   //construct URL for weather URL and store in variable called currentWeatherURL
 
@@ -108,13 +109,16 @@ const onLoad = () => {
   //fetch weather data(city name)
 };
 
-//need click function for submit button
-
 const onSubmit = (event) => {
   event.preventDefault();
   const searchedCity = $("#searched-city").val();
-  console.log(searchedCity);
   //get city name and store as variable
+  const cities = getFromLocalStorage();
+  cities.push(searchedCity);
+  localStorage.setItem("searched-cities", JSON.stringify(cities));
+  renderCitiesFromLocalStorage();
+  $("searched-city").val("");
+
   fetchAllWeatherData(searchedCity);
 };
 
@@ -122,6 +126,8 @@ const onSubmit = (event) => {
 //   //get city name from the list item that was clicked and store as variable
 //   fetchAllWeatherData(cityName);
 // };
+
+//need click function for submit button
 $("#submit-button").on("click", onSubmit);
 // $("#constructed-list-items").click(onClick);
 // $(document).ready(onLoad);
