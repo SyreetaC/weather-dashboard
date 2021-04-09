@@ -92,15 +92,18 @@ const onLoad = () => {
 
 //need click function for submit button
 
-const onSubmit = (cityName) => {
+const onSubmit = (event) => {
+  event.preventDefault();
+  const searchedCity = $("#searched-city").val();
+  console.log(searchedCity);
   //get city name and store as variable
-  fetchAllWeatherData(cityName);
+  fetchAllWeatherData(searchedCity);
 };
 
-const onClick = () => {
-  //get city name from the list item that was clicked and store as variable
-  fetchAllWeatherData(cityName);
-};
-$("#input-form").submit(onSubmit);
-$("#constructed-list-items").click(onClick);
-$(document).ready(onLoad);
+// const onClick = () => {
+//   //get city name from the list item that was clicked and store as variable
+//   fetchAllWeatherData(cityName);
+// };
+$("#submit-button").on("click", onSubmit);
+// $("#constructed-list-items").click(onClick);
+// $(document).ready(onLoad);
