@@ -29,19 +29,19 @@ const getForecastData = (oneApiData) => {
 renderCurrentCardComponent = (currentData) => {};
 renderForecastComponents = (forecastData) => {};
 
-const fetchAllWeatherData = (cityName) => {
-  const weatherApiUrl = fetch(
-    "http://api.openweathermap.org/data/2.5/forecast?q={cityname}&appid=d34a16a53b39e4eaf211ff76b0adf70c"
-  );
-  //construct URL for weather URL and store in variable called weatherApiUrl
+const fetchAllWeatherData = (city) => {
+  const currentWeatherUrl =
+    "http://api.openweathermap.org/data/2.5/forecast?q=London&appid=d34a16a53b39e4eaf211ff76b0adf70c";
+  fetch(currentWeatherUrl);
+  //construct URL for weather URL and store in variable called currentWeatherURL
 
-  const functionForJson = (responseObject) => {
+  const functionForJSON = (responseObject) => {
     if (responseObject.status !== 200) {
       throw new Error("Internal Server Error");
-    } else {
-      return responseObject.json();
     }
+    return responseObject.json();
   };
+
   const functionForApplication = (dataFromServer) => {
     console.log(dataFromServer);
     //whatever your application code is goes here
@@ -76,7 +76,7 @@ const fetchAllWeatherData = (cityName) => {
     // handle your error here according to your application
   };
 
-  fetch(weatherApiUrl)
+  fetch(currentWeatherUrl)
     .then(functionForJSON)
     .then(functionForApplication)
     .catch(functionToHandleError);
