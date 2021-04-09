@@ -26,7 +26,12 @@ const getForecastData = (oneApiData) => {
     },
   ];
 };
-renderCurrentCardComponent = (currentData) => {};
+renderCurrentCardComponent = (dataFromServer) => {
+  const currentDate = moment().format("DD/MM/YYYY");
+  $("#weather-container").append(`<h2>
+  ${dataFromServer.name} <span>(${currentDate}) </span><span><img src="https://openweathermap.org/img/w/${dataFromServer.weather[0].icon}.png"></span>
+</h2>`);
+};
 renderForecastComponents = (forecastData) => {};
 
 const fetchAllWeatherData = (city) => {
@@ -44,6 +49,9 @@ const fetchAllWeatherData = (city) => {
 
   const functionForApplication = (dataFromServer) => {
     console.log(dataFromServer);
+
+    renderCurrentCardComponent(dataFromServer);
+
     //whatever your application code is goes here
     //1. from the datafromserver get the lat and long
     //2. use lat and long to contruct next URL with 5 day weather and store in variable called oneCallApiUrl
@@ -58,7 +66,7 @@ const fetchAllWeatherData = (city) => {
       const currentData = getCurrentData();
       const forecastData = getForecastData();
 
-      renderCurrentCardComponent();
+      renderCurrentCardComponent(dataFromServer);
       renderForecastComponents();
       // whatever your application code is goes here
     };
