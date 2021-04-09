@@ -32,7 +32,43 @@ renderCurrentCardComponent = (dataFromServer) => {
   ${dataFromServer.name} <span>(${currentDate}) </span><span><img src="https://openweathermap.org/img/w/${dataFromServer.weather[0].icon}.png"></span>
 </h2>`);
 };
-renderForecastComponents = (forecastData) => {};
+
+const getOneCallApiUrl = (dataFromServer) => {
+  const longLatObject = {
+    lon: dataFromServer.coord.lon,
+    lat: dataFromServer.coord.lat,
+  };
+  console.log(longLatObject); //does not work
+
+  const oneCallApiUrl =
+    "https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude={part}&appid=d34a16a53b39e4eaf211ff76b0adf70c";
+  //whatever your application code is goes here
+  //1. from the datafromserver get the lat and long
+  //2. use lat and long to contruct next URL with 5 day weather and store in variable called oneCallApiUrl
+  //once you have the next URL:
+  const functionForJSON = (responseObject) => {
+    // unless you have some logic here do that before you return
+    return responseObject.json();
+  };
+  const functionForApplication = (dataFromServer) => {
+    const oneApiData = dataFromServer;
+    //take current day data and forecast data from here by calling a function for each
+    const currentData = getCurrentData();
+    const forecastData = getForecastData();
+  };
+
+  renderForecastComponents = (forecastData) => {};
+
+  const functionToHandleError = (errorObject) => {
+    console.log("Something went wrong");
+    // handle your error here according to your application
+  };
+
+  fetch(currentWeatherUrl)
+    .then(functionForJSON)
+    .then(functionForApplication)
+    .catch(functionToHandleError);
+};
 
 const fetchAllWeatherData = (city) => {
   const currentWeatherUrl =
@@ -50,40 +86,14 @@ const fetchAllWeatherData = (city) => {
   const functionForApplication = (dataFromServer) => {
     console.log(dataFromServer);
 
-    renderCurrentCardComponent(dataFromServer);
+    renderCurrentCardComponent(); //STUCK HERE!!!
 
-    //whatever your application code is goes here
-    //1. from the datafromserver get the lat and long
-    //2. use lat and long to contruct next URL with 5 day weather and store in variable called oneCallApiUrl
-    //once you have the next URL:
-    const functionForJSON = (responseObject) => {
-      // unless you have some logic here do that before you return
-      return responseObject.json();
-    };
-    const functionForApplication = (dataFromServer) => {
-      const oneApiData = dataFromServer;
-      //take current day data and forecast data from here by calling a function for each
-      const currentData = getCurrentData();
-      const forecastData = getForecastData();
-
-      renderCurrentCardComponent(dataFromServer);
-      renderForecastComponents();
-      // whatever your application code is goes here
-    };
-    const functionToHandleError = (errorObject) => {
-      // handle your error here according to your application
-    };
-    fetch(oneCallApiUrl)
-      .then(functionForJSON)
-      .then(functionForApplication)
-      .catch(functionToHandleError);
+    renderForecastComponents();
+    // whatever your application code is goes here
   };
-
   const functionToHandleError = (errorObject) => {
-    console.log("Something went wrong");
     // handle your error here according to your application
   };
-
   fetch(currentWeatherUrl)
     .then(functionForJSON)
     .then(functionForApplication)

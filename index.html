@@ -20,38 +20,42 @@
       <h1>Weather Dashboard!</h1>
     </header>
     <div>
-      <div>
-        <p class="fs-2 text-center">
-          Enter a city below to find out the weather conditions for the next 5
-          days.
-        </p>
-      </div>
-      <div id="search-form">
-        <label for="search-bar" class="form-label d-block ms-3"
-          >Search for a City:</label
-        >
-        <nav class="navbar navbar-light bg-light">
-          <div class="container-fluid">
-            <form id="input-form" class="d-flex">
+
+      <main>
+        <div>
+          <p class="fs-2 text-center">
+            Enter a city below to find out the weather conditions for the next 5
+            days.
+          </p>
+        </div>
+        <div class="row">
+          <!-- Search bar and previous searches tab -->
+          <aside class="col-lg-3 col-sm-12 bg-light">
+            <form class="p-3" id="search-city">
+              <label for="search-bar" class="form-label d-block"
+                >Search for a City:</label
+              >
               <input
                 id="searched-city"
-                class="form-control me-2"
+                class="form-control me-0 w-75 d-inline"
                 type="search"
                 placeholder="Search"
                 aria-label="Search"
               />
               <button
-                id="submit-button"
-                class="btn btn-outline-success"
+              id="submit-button"
+                class="btn btn-outline-success m-x-0 align-top"
                 type="submit"
               >
                 Search
               </button>
             </form>
-          </div>
-        </nav>
-      </div>
-    </div>
+            <ul
+              class="list-group p-3 pointer-cursor"
+              id="search-cards-container"
+            ></ul>
+          </aside>
+        </main>
     <div
       id="weather-container"
       class="d-flex p-2 bd-highlight d-flex justify-content-center fs-2"
