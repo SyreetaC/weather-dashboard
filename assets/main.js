@@ -112,8 +112,8 @@ const getOneCallApiUrl = (dataFromServer) => {
     .catch(functionToHandleError);
 };
 
-const fetchAllWeatherData = (city) => {
-  const currentWeatherUrl = `http://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=d34a16a53b39e4eaf211ff76b0adf70c`;
+const fetchAllWeatherData = (cities) => {
+  const currentWeatherUrl = `http://api.openweathermap.org/data/2.5/forecast?q=${cities}&appid=d34a16a53b39e4eaf211ff76b0adf70c`;
   //construct URL for weather URL and store in variable called currentWeatherURL
 
   const functionForJSON = (responseObject) => {
