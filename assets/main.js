@@ -1,8 +1,48 @@
-const renderCitiesFromLocalStorage = (citiesFromLocalStorage) => {
+const API = "d34a16a53b39e4eaf211ff76b0adf70c";
+
+const renderCitiesFromLocalStorage = () => {
+  $("#local-storage-container").empty();
+
   //for each city, construct a list item and append to the list group.
+  const cities = getFromLocalStorage();
+
+  const ul = $("<ul>").addClass("list-group");
+
+  const appendListItemToUl = (city) => {
+    const li = $("<li>")
+      .addClass("list-group-item")
+      .attr("data-city", city)
+      .text(city);
+
+    ul.append(li);
+  };
+
+  cities.forEach(appendListItemToUl);
+
+  ul.on("click", getDataByCityName);
+
+  $("#local-storage-container").append(ul);
 };
 
-const getFromLocalStorage = () => {};
+const getFromLocalStorage = () => {
+  const localStorageData = JSON.parse(localStorage.getItem("cities"));
+
+  if (localStorageData === null) {
+    return [];
+  } else {
+    return localStorageData;
+  }
+};
+
+//When the city is clicked on the ul, the city name is stored in a variable.
+const getDataByCityName = (event) => {
+  const target = $(event.target);
+  if (target.is("li")) {
+    const cityName = target.data("city");
+    console.log(cityName);
+    fetchData(cityName);
+  }
+};
 
 const getCurrentData = (oneApiData) => {
   //from object, extract the data points you need for the return data
@@ -74,7 +114,6 @@ const getOneCallApiUrl = (dataFromServer) => {
 
 const fetchAllWeatherData = (city) => {
   const currentWeatherUrl = `http://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=d34a16a53b39e4eaf211ff76b0adf70c`;
-  fetch(currentWeatherUrl);
   //construct URL for weather URL and store in variable called currentWeatherURL
 
   const functionForJSON = (responseObject) => {
@@ -130,4 +169,4 @@ const onSubmit = (event) => {
 //need click function for submit button
 $("#submit-button").on("click", onSubmit);
 // $("#constructed-list-items").click(onClick);
-// $(document).ready(onLoad);
+$(document).ready(onLoad);
