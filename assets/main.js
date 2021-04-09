@@ -25,7 +25,7 @@ const renderCitiesFromLocalStorage = () => {
 };
 
 const getFromLocalStorage = () => {
-  const localStorageData = JSON.parse(localStorage.getItem("cities"));
+  const localStorageData = JSON.parse(localStorage.getItem("searched-cities"));
 
   if (localStorageData === null) {
     return [];
@@ -44,7 +44,7 @@ const getDataByCityName = (event) => {
   }
 };
 
-const getCurrentData = (oneApiData) => {
+const getCurrentWeatherData = (oneApiData) => {
   //from object, extract the data points you need for the return data
   return {
     name: "",
