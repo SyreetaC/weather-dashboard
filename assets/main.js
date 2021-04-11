@@ -1,9 +1,101 @@
 const API = "d34a16a53b39e4eaf211ff76b0adf70c";
 
-const renderCitiesFromLocalStorage = () => {
-  $("#local-storage-container").empty();
+const getFromLocalStorage = () => {
+  const localStorageData = JSON.parse(localStorage.getItem("cities"));
 
-  //for each city, construct a list item and append to the list group.
+  if (localStorageData === null) {
+    return [];
+  } else {
+    return localStorageData;
+  }
+};
+
+const fetchData = async (url) => {
+  try {
+    const response = await fetch(url);
+
+    const data = await response.json();
+
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const getDataByCityName = async (event) => {
+  const target = $(event.target);
+  if (target.is("li")) {
+    const cityName = target.data("city");
+
+    renderAllCards(cityName);
+  }
+};
+
+const transformCurrentDayData = (data, name) => {
+  const current = data.current;
+  return {
+    cityName: name,
+    temperature: current.temp,
+    humidity: current.humidity,
+    windSpeed: current.wind_speed,
+    date: moment.unix(current.dt).format("MM/DD/YYYY"),
+    iconURL: `http://openweathermap.org/img/wn/${current.weather[0].icon}@2x.png`,
+    uvi: current.uvi,
+  };
+};
+
+const transformForecastData = (data) => {
+  return {
+    date: moment.unix(data.dt).format("MM/DD/YYYY"),
+    iconURL: `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`,
+    temperature: data.temp.day,
+    humidity: data.humidity,
+  };
+};
+
+const onSubmit = async (event) => {
+  event.preventDefault();
+
+  const cityName = $("#city-input").val();
+  const cities = getFromLocalStorage();
+
+  cities.push(cityName);
+
+  localStorage.setItem("cities", JSON.stringify(cities));
+
+  renderCitiesFromLocalStorage();
+
+  $("#city-input").val("");
+
+  renderAllCards(cityName);
+};
+
+const renderAllCards = async (cityName) => {
+  const currentDayUrl = `http://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=metric&appid=${API}`;
+
+  const currentDayResponse = await fetchData(currentDayUrl);
+
+  const forecastUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${currentDayResponse.coord.lat}&lon=${currentDayResponse.coord.lon}&exclude=minutely,hourly&units=metric&appid=${API}`;
+
+  const forecastResponse = await fetchData(forecastUrl);
+
+  const cardsData = forecastResponse.daily.map(transformForecastData);
+
+  $("#forecast-cards-container").empty();
+
+  cardsData.slice(1, 6).forEach(renderForecastCard);
+
+  const currentDayData = transformCurrentDayData(
+    forecastResponse,
+    currentDayResponse.name
+  );
+
+  renderCurrentDayCard(currentDayData);
+};
+
+const renderCitiesFromLocalStorage = () => {
+  $("#searched-cities").empty();
+
   const cities = getFromLocalStorage();
 
   const ul = $("<ul>").addClass("list-group");
@@ -21,152 +113,60 @@ const renderCitiesFromLocalStorage = () => {
 
   ul.on("click", getDataByCityName);
 
-  $("#local-storage-container").append(ul);
+  $("#searched-cities").append(ul);
 };
 
-const getFromLocalStorage = () => {
-  const localStorageData = JSON.parse(localStorage.getItem("searched-cities"));
-
-  if (localStorageData === null) {
-    return [];
+// FIX this function with the right class names and threshold values and then use in renderCurrentDayCard()
+const getUvIndexClass = () => {
+  const uvIndex = forecastResponse.current.uvi;
+  $("#UV index").text(uvIndex);
+  if (uvIndex <= 2) {
+    $("#UV index").addClass("bg-success");
+  } else if (uvIndex < 8) {
+    $("#UV index").addClass("bg-warning");
   } else {
-    return localStorageData;
+    $("#UV index").addClass("bg-danger");
   }
 };
 
-//When the city is clicked on the ul, the city name is stored in a variable.
-const getDataByCityName = (event) => {
-  const target = $(event.target);
-  if (target.is("li")) {
-    const cityName = target.data("city");
-    console.log(cityName);
-    fetchData(cityName);
-  }
+const renderCurrentDayCard = (data) => {
+  $("#current-day").empty();
+
+  const card = `<div class="card my-2">
+    <div class="card-body">
+      <h2>
+        ${data.cityName} (${data.date}) <img src="${data.iconURL}" />
+      </h2>
+      <div class="py-2">Temperature: ${data.temperature}&deg; C</div>
+      <div class="py-2">Humidity: ${data.humidity}%</div>
+      <div class="py-2">Wind Speed: ${data.windSpeed} MPH</div>
+      <div class="py-2">UV Index: <span class="">${data.uvi}</span></div>
+    </div>
+  </div>`;
+
+  $("#current-day").append(card);
+  getUvIndexClass();
 };
 
-const getCurrentWeatherData = (oneApiData) => {
-  //from object, extract the data points you need for the return data
-  return {
-    name: "",
-    date: "",
-    iconURL: "",
-    temperature: "",
-    humidity: "",
-    windSpeed: "",
-    uvIndex: 0,
-  };
+const renderForecastCard = (data) => {
+  const card = `<div class="card mh-100 bg-primary text-light rounded card-block">
+    <h5 class="card-title p-1">${data.date}</h5>
+    <img src="${data.iconURL}" />
+    <h6 class="card-subtitle mb-2 text-light p-md-2">
+      Temperature: ${data.temperature}&deg; C
+    </h6>
+    <h6 class="card-subtitle mb-2 text-light p-md-2">
+      Humidity: ${data.humidity}%
+    </h6>
+  </div>`;
+
+  $("#forecast-cards-container").append(card);
 };
 
-const getForecastData = (oneApiData) => {
-  //iterate and construct the return data array
-  return [
-    {
-      date: "",
-      iconURL: "",
-      temperature: "",
-      humidity: "",
-    },
-  ];
-};
-renderCurrentCardComponent = (dataFromServer) => {
-  const currentDate = moment().format("DD/MM/YYYY");
-  $("#weather-container").append(`<h2>
-  ${dataFromServer.name} <span>(${currentDate}) </span><span><img src="https://openweathermap.org/img/w/${dataFromServer.weather[0].icon}.png"></span>
-</h2>`);
-};
-
-const getOneCallApiUrl = (dataFromServer) => {
-  const longLatObject = {
-    lon: dataFromServer.coord.lon,
-    lat: dataFromServer.coord.lat,
-  };
-  console.log(longLatObject); //does not work
-
-  const oneCallApiUrl =
-    "https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude={part}&appid=d34a16a53b39e4eaf211ff76b0adf70c";
-  //whatever your application code is goes here
-  //1. from the datafromserver get the lat and long
-  //2. use lat and long to contruct next URL with 5 day weather and store in variable called oneCallApiUrl
-  //once you have the next URL:
-  const functionForJSON = (responseObject) => {
-    // unless you have some logic here do that before you return
-    return responseObject.json();
-  };
-  const functionForApplication = (dataFromServer) => {
-    const oneApiData = dataFromServer;
-    //take current day data and forecast data from here by calling a function for each
-    const currentData = getCurrentData();
-    const forecastData = getForecastData();
-  };
-
-  renderForecastComponents = (forecastData) => {};
-
-  const functionToHandleError = (errorObject) => {
-    console.log("Something went wrong");
-    // handle your error here according to your application
-  };
-
-  fetch(currentWeatherUrl)
-    .then(functionForJSON)
-    .then(functionForApplication)
-    .catch(functionToHandleError);
-};
-
-const fetchAllWeatherData = (cities) => {
-  const currentWeatherUrl = `http://api.openweathermap.org/data/2.5/forecast?q=${cities}&appid=d34a16a53b39e4eaf211ff76b0adf70c`;
-  //construct URL for weather URL and store in variable called currentWeatherURL
-
-  const functionForJSON = (responseObject) => {
-    if (responseObject.status !== 200) {
-      throw new Error("Internal Server Error");
-    }
-    return responseObject.json();
-  };
-
-  const functionForApplication = (dataFromServer) => {
-    console.log(dataFromServer);
-
-    renderCurrentCardComponent(); //STUCK HERE!!!
-
-    renderForecastComponents();
-    // whatever your application code is goes here
-  };
-  const functionToHandleError = (errorObject) => {
-    // handle your error here according to your application
-  };
-  fetch(currentWeatherUrl)
-    .then(functionForJSON)
-    .then(functionForApplication)
-    .catch(functionToHandleError);
-};
-
-const onLoad = () => {
-  //read from local storage and store data in variable called cities from local storage
-  //if data is present, call rendercities and pass the data from local storage
-  //render cities function (cities from local storage)
-  //get the last city name from citiesfromlocalstorage and store in a variable called cityname
-  //fetch weather data(city name)
-};
-
-const onSubmit = (event) => {
-  event.preventDefault();
-  const searchedCity = $("#searched-city").val();
-  //get city name and store as variable
-  const cities = getFromLocalStorage();
-  cities.push(searchedCity);
-  localStorage.setItem("searched-cities", JSON.stringify(cities));
+const onReady = () => {
   renderCitiesFromLocalStorage();
-  $("searched-city").val("");
-
-  fetchAllWeatherData(searchedCity);
 };
 
-// const onClick = () => {
-//   //get city name from the list item that was clicked and store as variable
-//   fetchAllWeatherData(cityName);
-// };
+$("#search-by-city-form").on("submit", onSubmit);
 
-//need click function for submit button
-$("#submit-button").on("click", onSubmit);
-// $("#constructed-list-items").click(onClick);
-$(document).ready(onLoad);
+$(document).ready(onReady);
