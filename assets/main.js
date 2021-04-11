@@ -71,11 +71,11 @@ const onSubmit = async (event) => {
 };
 
 const renderAllCards = async (cityName) => {
-  const currentDayUrl = `http://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=metric&appid=${API}`;
+  const currentDayUrl = `http://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=metric&appid=d34a16a53b39e4eaf211ff76b0adf70c`;
 
   const currentDayResponse = await fetchData(currentDayUrl);
 
-  const forecastUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${currentDayResponse.coord.lat}&lon=${currentDayResponse.coord.lon}&exclude=minutely,hourly&units=metric&appid=${API}`;
+  const forecastUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${currentDayResponse.coord.lat}&lon=${currentDayResponse.coord.lon}&exclude=minutely,hourly&units=metric&appid=d34a16a53b39e4eaf211ff76b0adf70c`;
 
   const forecastResponse = await fetchData(forecastUrl);
 
@@ -116,9 +116,8 @@ const renderCitiesFromLocalStorage = () => {
   $("#searched-cities").append(ul);
 };
 
-// FIX this function with the right class names and threshold values and then use in renderCurrentDayCard()
-const getUvIndexClass = () => {
-  const uvIndex = forecastResponse.current.uvi;
+const getUvIndexClass = (currentDayResponse) => {
+  const uvIndex = currentDayResponse.current.uvi;
   $("#UV index").text(uvIndex);
   if (uvIndex <= 2) {
     $("#UV index").addClass("bg-success");
