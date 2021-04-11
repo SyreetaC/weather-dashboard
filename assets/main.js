@@ -118,6 +118,7 @@ const renderCitiesFromLocalStorage = () => {
 
 const getUvIndexClass = (currentDayResponse) => {
   const uvIndex = currentDayResponse.uvi;
+  console.log(uvIndex);
   $("#UV index").text(uvIndex);
   if (uvIndex <= 2) {
     $("#UV index").addClass("bg-success");
