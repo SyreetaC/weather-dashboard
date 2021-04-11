@@ -18,7 +18,7 @@ const fetchData = async (url) => {
 
     return data;
   } catch (error) {
-    console.log(error);
+    return error;
   }
 };
 
@@ -117,7 +117,7 @@ const renderCitiesFromLocalStorage = () => {
 };
 
 const getUvIndexClass = (currentDayResponse) => {
-  const uvIndex = currentDayResponse.current.uvi;
+  const uvIndex = currentDayResponse.uvi;
   $("#UV index").text(uvIndex);
   if (uvIndex <= 2) {
     $("#UV index").addClass("bg-success");
@@ -144,7 +144,7 @@ const renderCurrentDayCard = (data) => {
   </div>`;
 
   $("#current-day").append(card);
-  getUvIndexClass();
+  getUvIndexClass(data);
 };
 
 const renderForecastCard = (data) => {
