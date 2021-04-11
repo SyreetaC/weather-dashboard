@@ -118,13 +118,13 @@ const renderCitiesFromLocalStorage = () => {
 
 const getUvIndexClass = (currentDayResponse) => {
   const uvIndex = currentDayResponse.uvi;
-  $("#UV index").text(uvIndex);
+  $("#UV-index").text(uvIndex);
   if (uvIndex <= 2) {
-    $("#UV index").addClass("bg-success");
+    $("#UV-index").addClass("bg-success");
   } else if (uvIndex < 8) {
-    $("#UV index").addClass("bg-warning");
+    $("#UV-index").addClass("bg-warning");
   } else {
-    $("#UV index").addClass("bg-danger");
+    $("#UV-index").addClass("bg-danger");
   }
 };
 
@@ -139,7 +139,7 @@ const renderCurrentDayCard = (data) => {
       <div class="py-2">Temperature: ${data.temperature}&deg; C</div>
       <div class="py-2">Humidity: ${data.humidity}%</div>
       <div class="py-2">Wind Speed: ${data.windSpeed} MPH</div>
-      <div id="UV index" class="py-2">UV Index: <span class="">${data.uvi}</span></div>
+      <div id="UV-index" class="py-2">UV Index: <span class="">${data.uvi}</span></div>
     </div>
   </div>`;
 
