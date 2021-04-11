@@ -23,5 +23,6 @@ https://syreetac.github.io/weather-dashboard/
 
 The screenshots below show the functionality of the deployed application:
 
-![screenshot]()
-![screenshot]()
+![screenshot](<./assets/images/Screenshot%20(22).png>)
+![screenshot](<./assets/images/Screenshot%20(23).png>)
+![screenshot](<./assets/images/Screenshot%20(24).png>)
